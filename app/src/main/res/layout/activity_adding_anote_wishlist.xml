@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".adding_a_note">
+
+    <EditText
+        android:id="@+id/editTextAddNoteWishList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="40dp"
+        android:inputType="textPersonName"
+        android:hint="@string/addANote"
+        />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="40dp"
+        android:gravity="center"
+        >
+
+        <RadioButton
+            android:id="@+id/radioButtonLowWishList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#7731D7"
+            android:padding="8dp"
+            android:checked="true"
+            android:text="@string/radioButtonLow" />
+
+        <RadioButton
+            android:id="@+id/radioButtonMiddleWishList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#9921D5"
+            android:padding="8dp"
+            android:text="@string/radioButtonMiddle" />
+
+        <RadioButton
+            android:id="@+id/radioButtonHighWishList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#C51162"
+            android:padding="8dp"
+            android:text="@string/radioButtonHigh" />
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/buttonAddANoteWishList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/buttonAddANote"
+        android:textColor="#121212" />
+
+</LinearLayout>

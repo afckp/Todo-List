@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Todo List</string>
+    <string name="textViewTodoList">Todo List</string>
+    <string name="buttonAll">Все задачи</string>
+    <string name="buttonWork">Работа</string>
+    <string name="buttonPersonal">Личное</string>
+    <string name="buttonWishList">Список желаний</string>
+    <string name="buttonTasks">Задачи</string>
+    <string name="buttonCalendar">Календарь</string>
+    <string name="textViewAllTasks">Все задачи</string>
+    <string name="buttonAddTasks">+</string>
+    <string name="TextViewWork">Работа</string>
+    <string name="buttonAllTasks">Задачи</string>
+    <string name="buttonCalendarWork">Календарь</string>
+    <string name="buttonAdd">+</string>
+    <string name="textViewPersonal">Личное</string>
+    <string name="adding_a_task">adding a task</string>
+    <string name="adding_a_task_all">adding a task</string>
+    <string name="buttonAllTasksPersonal">Задачи</string>
+    <string name="buttonCalendarPersonal">Календарь</string>
+    <string name="adding_a_task_work">adding a task</string>
+    <string name="adding_a_task_personal">adding a task</string>
+    <string name="addANote">Введите заметку</string>
+    <string name="radioButtonMiddle">Средний</string>
+    <string name="radioButtonLow">Низкий</string>
+    <string name="radioButtonHigh">Высокий</string>
+    <string name="buttonAddANote">Добавить!</string>
+    <string name="textWishList">Список желаний</string>
+    <string name="buttonTaskWishList">Задачи</string>
+    <string name="buttonCalendarWishList">Календарь</string>
+    <string name="buttonHintAddingANote">adding a note</string>
+    <string name="hello">Hello!</string>
+</resources>
