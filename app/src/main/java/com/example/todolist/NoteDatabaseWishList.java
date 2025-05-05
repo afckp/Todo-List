@@ -21,4 +21,6 @@ public abstract class NoteDatabaseWishList extends RoomDatabase {
         return instance;
     }
 
+    public abstract NotesDaoWishList notesDaoWishList();
+
 }

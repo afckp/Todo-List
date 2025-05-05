@@ -3,6 +3,8 @@ package com.example.todolist;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +16,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+
 public class adding_a_note_personal extends AppCompatActivity {
 
     private EditText editTextAddNotePersonal;
@@ -21,7 +24,9 @@ public class adding_a_note_personal extends AppCompatActivity {
     private RadioButton radioButtonMiddlePersonal;
     private RadioButton radioButtonHighPersonal;
     private Button buttonAddANotePersonal;
-    private DataBasePersonal databasePersonal = DataBasePersonal.getInstance();
+    private NoteDatabasePersonal noteDatabasePersonal;
+    private Handler handler = new Handler(Looper.getMainLooper());
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +38,7 @@ public class adding_a_note_personal extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        noteDatabasePersonal = NoteDatabasePersonal.getInstance(getApplication());
         initViews();
 
         buttonAddANotePersonal.setOnClickListener(new View.OnClickListener() {
@@ -46,11 +52,22 @@ public class adding_a_note_personal extends AppCompatActivity {
     private void saveNote() {
         String text = editTextAddNotePersonal.getText().toString().trim();
         int priority = getPriority();
-        int id = databasePersonal.getNotes().size();
-        NotePersonal notePersonal = new NotePersonal(id, text, priority);
-        databasePersonal.add(notePersonal);
+        NotePersonal notePersonal = new NotePersonal(text, priority);
 
-        finish();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                noteDatabasePersonal.notesDaoPersonal().add(notePersonal);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        finish();
+                    }
+                });
+            }
+        });
+        thread.start();
     }
 
     private int getPriority() {

@@ -10,21 +10,22 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class NotesAdapterPersonal extends RecyclerView.Adapter<NotesAdapterPersonal.NotesViewHolder> {
 
-    private ArrayList notesPersonal = new ArrayList<>();
+    private List<NotePersonal> notesPersonal = new ArrayList<>();
     private OnNoteClickListener onNoteClickListener;
 
     public void setOnNoteClickListener(OnNoteClickListener onNoteClickListener) {
         this.onNoteClickListener = onNoteClickListener;
     }
 
-    public ArrayList getNotes() {
+    public List<NotePersonal> getNotes() {
         return new ArrayList<>(notesPersonal);
     }
 
-    public void setNotesPersonal(ArrayList<NotePersonal> notesPersonal) {
+    public void setNotesPersonal(List<NotePersonal> notesPersonal) {
         this.notesPersonal = notesPersonal;
         notifyDataSetChanged();
     }

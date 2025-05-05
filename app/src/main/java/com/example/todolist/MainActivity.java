@@ -47,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
         buttonPersonal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = personal.newIntent(MainActivity.this);
+                Intent intent = adding_a_note.newIntent(MainActivity.this);
+                intent.putExtra("selected_category", Category.PERSONAL);
                 startActivity(intent);
             }
         });
@@ -55,7 +56,8 @@ public class MainActivity extends AppCompatActivity {
         buttonWork.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = Work.newIntent(MainActivity.this);
+                Intent intent = adding_a_note.newIntent(MainActivity.this);
+                intent.putExtra("selected_category", Category.WORK);
                 startActivity(intent);
             }
         });
@@ -63,7 +65,8 @@ public class MainActivity extends AppCompatActivity {
         buttonWishList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = WishList.newIntent(MainActivity.this);
+                Intent intent = adding_a_note.newIntent(MainActivity.this);
+                intent.putExtra("selected_category", Category.WISHLIST);
                 startActivity(intent);
             }
         });

@@ -3,6 +3,8 @@ package com.example.todolist;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,7 +23,8 @@ public class adding_a_note_wishlist extends AppCompatActivity {
     private RadioButton radioButtonMiddleWishList;
     private RadioButton radioButtonHighWishList;
     private Button buttonAddANoteWishList;
-    private DataBaseWishList databaseWishList = DataBaseWishList.getInstance();
+    private NoteDatabaseWishList noteDatabaseWishList;
+    private Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +36,7 @@ public class adding_a_note_wishlist extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        noteDatabaseWishList = NoteDatabaseWishList.getInstance(getApplication());
         initViews();
 
         buttonAddANoteWishList.setOnClickListener(new View.OnClickListener() {
@@ -46,11 +50,22 @@ public class adding_a_note_wishlist extends AppCompatActivity {
     private void saveNote() {
         String text = editTextAddNoteWishList.getText().toString().trim();
         int priority = getPriority();
-        int id = databaseWishList.getNotes().size();
-        NoteWishList noteWishList = new NoteWishList(id, text, priority);
-        databaseWishList.add(noteWishList);
+        NoteWishList noteWishList = new NoteWishList(text, priority);
 
-        finish();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                noteDatabaseWishList.notesDaoWishList().add(noteWishList);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        finish();
+                    }
+                });
+            }
+        });
+        thread.start();
     }
 
     private int getPriority() {

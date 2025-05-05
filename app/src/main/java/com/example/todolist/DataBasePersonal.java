@@ -15,6 +15,7 @@ public class DataBasePersonal {
     public void add(NotePersonal notePersonal) {
         notesPersonal.add(notePersonal);
 
+
     }
 
     public void remove(int id) {

@@ -3,6 +3,8 @@ package com.example.todolist;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,7 +23,8 @@ public class adding_a_note_work extends AppCompatActivity {
     private RadioButton radioButtonMiddleWork;
     private RadioButton radioButtonHighWork;
     private Button buttonAddANoteWork;
-    private DataBaseWork databaseWork = DataBaseWork.getInstance();
+    private NoteDatabaseWork noteDatabaseWork;
+    private Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +36,7 @@ public class adding_a_note_work extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        noteDatabaseWork = NoteDatabaseWork.getInstance(getApplication());
         initViews();
 
         buttonAddANoteWork.setOnClickListener(new View.OnClickListener() {
@@ -46,11 +50,22 @@ public class adding_a_note_work extends AppCompatActivity {
     private void saveNote() {
         String text = editTextAddNoteWork.getText().toString().trim();
         int priority = getPriority();
-        int id = databaseWork.getNotes().size();
-        NoteWork noteWork = new NoteWork(id, text, priority);
-        databaseWork.add(noteWork);
+        NoteWork noteWork = new NoteWork(text, priority);
 
-        finish();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                noteDatabaseWork.notesDaoWork().add(noteWork);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        finish();
+                    }
+                });
+            }
+        });
+        thread.start();
     }
 
     private int getPriority() {

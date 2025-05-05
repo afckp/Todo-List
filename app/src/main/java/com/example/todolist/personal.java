@@ -3,6 +3,8 @@ package com.example.todolist;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -15,18 +17,22 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.List;
+
 public class personal extends AppCompatActivity {
 
     private RecyclerView recyclerViewNotesPersonal;
     private FloatingActionButton buttonAddNote;
     private NotesAdapterPersonal notesAdapterPersonal;
-    private DataBasePersonal databasePersonal = DataBasePersonal.getInstance();
+    private NoteDatabasePersonal noteDatabasePersonal;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +44,9 @@ public class personal extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        noteDatabasePersonal = NoteDatabasePersonal.getInstance(getApplication());
+
         initViews();
 
         notesAdapterPersonal = new NotesAdapterPersonal();
@@ -50,6 +59,13 @@ public class personal extends AppCompatActivity {
         });
         recyclerViewNotesPersonal.setAdapter(notesAdapterPersonal);
 
+        noteDatabasePersonal.notesDaoPersonal().getNotes().observe(this, new Observer<List<NotePersonal>>() {
+            @Override
+            public void onChanged(List<NotePersonal> notesPersonal) {
+                notesAdapterPersonal.setNotesPersonal(notesPersonal);
+            }
+        });
+
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -60,12 +76,17 @@ public class personal extends AppCompatActivity {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
                 NotePersonal notePersonal = (NotePersonal) notesAdapterPersonal.getNotes().get(position);
-                databasePersonal.remove(notePersonal.getId());
-                showNotes();
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        noteDatabasePersonal.notesDaoPersonal().remove(notePersonal.getId());
+                    }
+                });
+                thread.start();
             }
         });
-        itemTouchHelper.attachToRecyclerView(recyclerViewNotesPersonal);
 
+        itemTouchHelper.attachToRecyclerView(recyclerViewNotesPersonal);
 
 
         buttonAddNote.setOnClickListener(new View.OnClickListener() {
@@ -76,12 +97,6 @@ public class personal extends AppCompatActivity {
             }
         });
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        showNotes();
-    }
     private void initViews() {
         recyclerViewNotesPersonal = findViewById(R.id.recyclerViewNotesPersonal);
         buttonAddNote = findViewById(R.id.buttonAddNote);
@@ -91,9 +106,5 @@ public class personal extends AppCompatActivity {
     public static Intent newIntent(Context context) {
         Intent intent = new Intent(context, personal.class);
         return intent;
-    }
-
-    private void showNotes() {
-        notesAdapterPersonal.setNotesPersonal(databasePersonal.getNotes());
     }
 }

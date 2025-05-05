@@ -5,7 +5,7 @@ import android.app.Application;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
-@Database(entities = {Note.class}, version = 1)
+@Database(entities = {Note.class}, version = 1, exportSchema = false)
 public abstract class NoteDatabaseAll extends RoomDatabase {
 
     private static NoteDatabaseAll instance = null;
@@ -21,4 +21,5 @@ public abstract class NoteDatabaseAll extends RoomDatabase {
         return instance;
     }
 
+    public abstract NotesDao notesDao();
 }

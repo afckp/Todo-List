@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,7 +22,7 @@ public class adding_a_note extends AppCompatActivity {
     private RadioButton radioButtonMiddle;
     private RadioButton radioButtonHigh;
     private Button buttonAddANote;
-    private DataBase database = DataBase.getInstance();
+    private AppDatabase appDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +34,14 @@ public class adding_a_note extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // Инициализируем единую базу данных
+        appDatabase = AppDatabase.getInstance(getApplication());
+
+        // Инициализируем компоненты
         initViews();
 
+        // Назначаем обработчик для кнопки добавления задачи
         buttonAddANote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -43,6 +50,7 @@ public class adding_a_note extends AppCompatActivity {
         });
     }
 
+    // Инициализация виджетов
     private void initViews() {
         editTextAddNote = findViewById(R.id.editTextAddNote);
         radioButtonLow = findViewById(R.id.radioButtonLow);
@@ -51,16 +59,28 @@ public class adding_a_note extends AppCompatActivity {
         buttonAddANote = findViewById(R.id.buttonAddANote);
     }
 
+    // Сохранение новой задачи
     private void saveNote() {
         String text = editTextAddNote.getText().toString().trim();
-        int priority = getPriority();
-        int id = database.getNotes().size();
-        Note note = new Note(id, text, priority);
-        database.add(note);
+        if (text.isEmpty()) {
+            Toast.makeText(this, "Введите текст задачи", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        int priority = getPriority();
+        int selectedCategory = getIntent().getIntExtra("selected_category", Category.PERSONAL); // Получаем выбранную категорию
+
+        // Создаем новую задачу
+        Note note = new Note(text, priority, selectedCategory);
+
+        // Добавляем задачу в базу данных
+        appDatabase.notesDao().insert(note);
+
+        // Закрываем активность
         finish();
     }
 
+    // Получаем выбранный приоритет
     private int getPriority() {
         int priority = 0;
         if (radioButtonLow.isChecked()) {
@@ -73,8 +93,15 @@ public class adding_a_note extends AppCompatActivity {
         return priority;
     }
 
+    // Получаем выбранную категорию задачи
+    private int getSelectedCategory() {
+        // Здесь реализуем логику определения категории (например, с помощью Spinner или RadioButtons)
+        // Для примера предположим, что задача принадлежит к категории "Личное"
+        return Category.PERSONAL;
+    }
+
+    // Создаем статический метод для запуска активности
     public static Intent newIntent(Context context) {
-        Intent intent = new Intent(context, adding_a_note.class);
-        return intent;
+        return new Intent(context, adding_a_note.class);
     }
 }

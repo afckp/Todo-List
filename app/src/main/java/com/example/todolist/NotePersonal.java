@@ -1,6 +1,7 @@
 package com.example.todolist;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "notesPersonal")
@@ -10,8 +11,10 @@ public class NotePersonal {
     private int id;
     private String text;
     private int priority;
-    public NotePersonal(int id, String text, int priority) {
-        this.id = id;
+
+
+    @Ignore
+    public NotePersonal(String text, int priority) {
         this.text = text;
         this.priority = priority;
     }

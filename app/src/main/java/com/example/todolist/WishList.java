@@ -3,6 +3,8 @@ package com.example.todolist;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -15,11 +17,14 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.List;
 
 public class WishList extends AppCompatActivity {
 
@@ -27,7 +32,7 @@ public class WishList extends AppCompatActivity {
 
     private RecyclerView recyclerViewNotesWishList;
     private NotesAdapterWishList notesAdapterWishList;
-    private DataBaseWishList databaseWishList = DataBaseWishList.getInstance();
+    private NoteDatabaseWishList noteDatabaseWishList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +44,8 @@ public class WishList extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        noteDatabaseWishList = NoteDatabaseWishList.getInstance(getApplication());
 
         initViews();
 
@@ -52,6 +59,13 @@ public class WishList extends AppCompatActivity {
         });
         recyclerViewNotesWishList.setAdapter(notesAdapterWishList);
 
+        noteDatabaseWishList.notesDaoWishList().getNotes().observe(this, new Observer<List<NoteWishList>>() {
+            @Override
+            public void onChanged(List<NoteWishList> notesWishList) {
+                notesAdapterWishList.setNotesWishList(notesWishList);
+            }
+        });
+
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -62,8 +76,14 @@ public class WishList extends AppCompatActivity {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
                 NoteWishList noteWishList = (NoteWishList) notesAdapterWishList.getNotes().get(position);
-                databaseWishList.remove(noteWishList.getId());
-                showNotes();
+
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        noteDatabaseWishList.notesDaoWishList().remove(noteWishList.getId());
+                        }
+                });
+                thread.start();
             }
         });
         itemTouchHelper.attachToRecyclerView(recyclerViewNotesWishList);
@@ -77,12 +97,6 @@ public class WishList extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        showNotes();
-    }
-
     private void initViews() {
         floatingActionButtonWishList = findViewById(R.id.floatingActionButtonWishList);
         recyclerViewNotesWishList = findViewById(R.id.recyclerViewNotesWishList);
@@ -91,9 +105,5 @@ public class WishList extends AppCompatActivity {
     public static Intent newIntent(Context context) {
         Intent intent = new Intent(context, WishList.class);
         return intent;
-    }
-
-    private void showNotes() {
-        notesAdapterWishList.setNotesWishList(databaseWishList.getNotes());
     }
 }
